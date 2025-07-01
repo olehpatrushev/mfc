@@ -1,8 +1,9 @@
 import {KeyboardLayout} from "../KeyboardLayout";
+import {KeyboardButton} from "../KeyboardButton";
 
 export class RussianKeyboardLayout extends KeyboardLayout {
-    protected locale = 'ru';
-    protected charsMappings = [
+    static LOCALE = 'ru';
+    static BUTTONS_OPTIONS = [
         {
             char: 'Й',
             rowIndex: 0,
@@ -59,7 +60,7 @@ export class RussianKeyboardLayout extends KeyboardLayout {
             columnIndex: 10,
         },
         {
-            specialChar: 'backspace',
+            specialChar: KeyboardButton.SPECIAL_CHAR_BACKSPACE,
             rowIndex: 0,
             columnIndex: 11,
         },
@@ -128,7 +129,7 @@ export class RussianKeyboardLayout extends KeyboardLayout {
 
 
         {
-            specialChar: 'shift',
+            specialChar: KeyboardButton.SPECIAL_CHAR_SHIFT,
             rowIndex: 2,
             columnIndex: 0,
         },
@@ -190,7 +191,7 @@ export class RussianKeyboardLayout extends KeyboardLayout {
 
 
         {
-            specialChar: '123',
+            specialChar: KeyboardButton.SPECIAL_CHAR_NUMBERS,
             rowIndex: 3,
             columnIndex: 0,
         },
@@ -200,10 +201,10 @@ export class RussianKeyboardLayout extends KeyboardLayout {
             columnIndex: 1,
         },
         {
-            specialChar: 'space',
+            specialChar: KeyboardButton.SPECIAL_CHAR_SPACE,
             rowIndex: 3,
             columnIndex: 2,
-            columnsCount: 8
+            columnsCount: 7
         },
         {
             char: '.',
@@ -211,7 +212,7 @@ export class RussianKeyboardLayout extends KeyboardLayout {
             columnIndex: 10,
         },
         {
-            specialChar: '123',
+            specialChar: KeyboardButton.SPECIAL_CHAR_NUMBERS,
             rowIndex: 3,
             columnIndex: 11,
         },

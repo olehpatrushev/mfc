@@ -1,11 +1,17 @@
 import {KeyboardButtonOptionsInterface} from "./KeyboardButtonOptionsInterface";
+import {KeyboardButton} from "./KeyboardButton";
 
 export class KeyboardLayout {
-    protected charsMappings: [KeyboardButtonOptionsInterface];
-    protected locale: string;
+    static LOCALE: string;
+    static BUTTONS_OPTIONS: KeyboardButtonOptionsInterface[];
 
-    static SPECIAL_CHAR_NUMBERS = 'numbers';
-    static SPECIAL_CHAR_SHIFT = 'shift';
-    static SPECIAL_CHAR_BACKSPACE = 'backspace';
-    static SPECIAL_CHAR_SPACE = 'space';
+    protected buttons: KeyboardButton[] = [];
+
+    addButton(button: KeyboardButton): void {
+        this.buttons.push(button);
+    }
+
+    getButtons(): KeyboardButton[] {
+        return this.buttons;
+    }
 }

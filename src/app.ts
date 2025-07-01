@@ -29,6 +29,7 @@ const keyboardService = new KeyboardService(
 )
 
 keyboardService.init();
+keyboardService.setupLocale('ru');
 
 window.addEventListener("resize", () => {
     sceneService.onResize()
