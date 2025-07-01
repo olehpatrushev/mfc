@@ -94,19 +94,43 @@ export class KeyboardService {
             const material = new StandardMaterial("buttonMat", this.scene);
             material.specularColor.setAll(0);
             material.emissiveColor.setAll(1);
-            const dynamicTexture = new DynamicTexture("dynamicTexture", {width: 256, height: 256}, this.scene, false);
+            const dynamicTexture = new DynamicTexture("dynamicTexture", {
+                width: width * 2,
+                height: height * 2
+            }, this.scene, false);
             material.diffuseTexture = dynamicTexture;
             mesh.material = material;
 
             const ctx = dynamicTexture.getContext() as CanvasRenderingContext2D;
             ctx.fillStyle = "#CCC"; // Цвет фона клавиши
-            ctx.fillRect(0, 0, 256, 256);
+            ctx.fillRect(0, 0, width * 2, height * 2);
 
-            ctx.font = "bold 150px Arial";
+            ctx.font = `bold ${Math.min(width, height)}px Arial`;
             ctx.fillStyle = "white";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
-            ctx.fillText(options.char, 128, 128); // Тут символ
+
+            let text: string;
+            if (options.char) {
+                text = options.char;
+            } else {
+                switch (options.specialChar) {
+                    case KeyboardButton.SPECIAL_CHAR_NUMBERS:
+                        text = '123';
+                        break;
+                    case KeyboardButton.SPECIAL_CHAR_SHIFT:
+                        text = '↑';
+                        break;
+                    case KeyboardButton.SPECIAL_CHAR_BACKSPACE:
+                        text = '←';
+                        break;
+                    case KeyboardButton.SPECIAL_CHAR_SPACE:
+                        text = locale;
+                        break;
+                }
+            }
+
+            ctx.fillText(text, width, height); // Тут символ
 
             dynamicTexture.update();
 
