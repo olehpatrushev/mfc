@@ -7,8 +7,8 @@ export class KeyboardButton {
     static SPECIAL_CHAR_BACKSPACE = 'backspace';
     static SPECIAL_CHAR_SPACE = 'space';
 
-    options: KeyboardButtonOptionsInterface
-    mesh: AbstractMesh;
+    private readonly options: KeyboardButtonOptionsInterface
+    private readonly mesh: AbstractMesh;
 
     constructor(options: KeyboardButtonOptionsInterface, mesh: AbstractMesh) {
         this.options = options;
@@ -17,5 +17,9 @@ export class KeyboardButton {
 
     getMesh(): AbstractMesh {
         return this.mesh;
+    }
+
+    getOptions(): KeyboardButtonOptionsInterface {
+        return this.options;
     }
 }

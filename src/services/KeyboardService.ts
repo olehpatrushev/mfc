@@ -1,31 +1,41 @@
 import {
+    AbstractMesh,
     DynamicTexture,
     Mesh,
     MeshBuilder,
     Node,
+    PointerEventTypes,
     Scene,
-    StandardMaterial, TransformNode,
+    StandardMaterial,
+    TransformNode,
     Vector3
 } from "@babylonjs/core";
+import {Observable} from "@babylonjs/core/Misc/observable";
 import * as KeyboardLayouts from "./keyboard/layouts";
 import {KeyboardLayout} from "./keyboard/KeyboardLayout";
 import {KeyboardButton} from "./keyboard/KeyboardButton";
+import {KeyPressedEvent} from "./keyboard/events/KeyPressedEvent";
 
 export class KeyboardService {
-    private scene: Scene;
+    private readonly scene: Scene;
 
-    private firstButtonPosition: Vector3 = new Vector3(-225, 67.5, 0);
-    private lastButtonPosition: Vector3 = new Vector3(270, -112.5, 0);
+    private firstButtonPosition: Vector3 = new Vector3(-225, 67.5, 10);
+    private lastButtonPosition: Vector3 = new Vector3(270, -112.5, 10);
     private offset: Vector3;
 
-    private rowsNodes = {};
     private keyboardNode: Node;
     private layouts = {};
+    private currentLayout: KeyboardLayout;
 
     private readonly buttonSize = {
         width: 38,
         height: 52
     }
+
+    private rowsCount = 4;
+    private columnsCount = 12;
+
+    public onKeyPressed = new Observable<KeyPressedEvent>();
 
     constructor(
         scene: Scene
@@ -41,8 +51,37 @@ export class KeyboardService {
         this.keyboardNode.parent = this.scene.getNodeById('Key');
 
         this.offset = this.lastButtonPosition.subtract(this.firstButtonPosition);
-        this.offset.x = this.offset.x / 11;
-        this.offset.y = this.offset.y / 3;
+        this.offset.x = this.offset.x / (this.columnsCount - 1);
+        this.offset.y = this.offset.y / (this.rowsCount - 1);
+
+        this.scene.onPointerObservable.add((pointerInfo) => {
+            if (pointerInfo.type === PointerEventTypes.POINTERDOWN) {
+                const pickResult = pointerInfo.pickInfo;
+                if (pickResult?.hit && pickResult.pickedMesh && pickResult.pickedMesh.name == 'keyboardButton') {
+                    const mesh = pickResult.pickedMesh;
+                    (mesh.material as StandardMaterial).emissiveColor.setAll(0);
+                    mesh.position.z -= 5;
+
+                    if (this.currentLayout) {
+                        const pressedButton: KeyboardButton = this.currentLayout.getButtons().find(button => button.getMesh() == mesh)
+                        const buttonOptions = pressedButton.getOptions();
+                        if (pressedButton) {
+                            const event = new KeyPressedEvent(buttonOptions.char, buttonOptions.specialChar);
+                            this.onKeyPressed.notifyObservers(event);
+                        }
+                    }
+                }
+            }
+
+            if (pointerInfo.type === PointerEventTypes.POINTERUP) {
+                this.keyboardNode.getChildren().forEach(mesh => {
+                    if (mesh.name == 'keyboardButton' && mesh instanceof AbstractMesh) {
+                        (mesh.material as StandardMaterial).emissiveColor.setAll(1);
+                        mesh.position.z = this.firstButtonPosition.z;
+                    }
+                });
+            }
+        });
     }
 
     protected hideAllButtons() {
@@ -75,7 +114,7 @@ export class KeyboardService {
                 height += this.offset.y * options.rowsCount;
             }
 
-            const mesh: Mesh = MeshBuilder.CreatePlane("button", {
+            const mesh: Mesh = MeshBuilder.CreatePlane("keyboardButton", {
                 width,
                 height
             }, this.scene);
@@ -85,7 +124,6 @@ export class KeyboardService {
             const position = this.firstButtonPosition.clone();
             position.x += (options.columnIndex + (options.columnsCount || 1 - 1) / 2) * this.offset.x;
             position.y += (options.rowIndex + (options.rowsCount || 1 - 1) / 2) * this.offset.y;
-            position.z = 10;
 
             mesh.position.copyFrom(position);
             mesh.rotation.set(0, Math.PI, 0);
@@ -154,5 +192,7 @@ export class KeyboardService {
         layout.getButtons().forEach((button: KeyboardButton) => {
             button.getMesh().setEnabled(true);
         });
+
+        this.currentLayout = layout;
     }
 }

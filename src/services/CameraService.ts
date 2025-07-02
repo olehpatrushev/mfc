@@ -11,7 +11,7 @@ import {KeyboardCameraTarget} from "./camera/targets/KeyboardCameraTarget";
 
 export class CameraService {
     private engine: Engine;
-    private scene: Scene;
+    private readonly scene: Scene;
     private camera: ArcRotateCamera;
     private cameraTarget: CameraTarget;
 
@@ -37,9 +37,9 @@ export class CameraService {
     }
 
     setCameraTarget(target: CameraTarget): void {
-        let node: Node | null = target.getNode();
+        let node: Node | undefined = target.getNode();
 
-        if (node == null) {
+        if (node == undefined) {
             node = this.scene.getNodeById(target.getNodeId())
 
             if (!(node instanceof TransformNode)) {

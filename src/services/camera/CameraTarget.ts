@@ -15,7 +15,7 @@ export class CameraTarget {
         this.node = node;
     }
 
-    getNode(): TransformNode | null {
+    getNode(): TransformNode | undefined {
         return this.node;
     }
 
